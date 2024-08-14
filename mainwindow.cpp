@@ -197,9 +197,18 @@ void MainWindow::setSwitch()
 void MainWindow::setWeather()
 {
     weather = new Weather();
+    // 创建一个QTimer对象
+    QTimer *timer = new QTimer(this);
+
+    // 连接定时器的timeout信号到Weather对象的getWeather函数
+    connect(timer, &QTimer::timeout, weather, &Weather::getWeather);
+
+    // 设置定时器每隔2小时触发一次
+    timer->start(1000 * 60 * 120);
     weather->getWeather();
 
     connect(weather, &Weather::sendWeather, this, [&](QString weather_, QString temp, QString province, QString city){
+        ui->Weather->clear();
         QTextImageFormat imageFormat;
         imageFormat.setWidth(weatherIconSize.width());
         imageFormat.setHeight(weatherIconSize.height());
@@ -223,6 +232,7 @@ void MainWindow::setWeather()
     });
 
     connect(weather, &Weather::getWeatherError, this, [&](){
+        ui->Weather->clear();
         QTextCursor cursor(ui->Weather->textCursor());
         QTextImageFormat imageFormat;
         imageFormat.setWidth(weatherIconSize.width());
