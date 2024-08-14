@@ -27,7 +27,7 @@ int switchCamearStretch = 3;
 
 // Weather api
 QString weatherApi =
-    "your api";
+    "your_api";
 
 // size
 QSize playerButtonSize(50, 50);

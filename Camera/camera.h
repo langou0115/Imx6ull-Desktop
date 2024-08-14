@@ -43,7 +43,11 @@ private:
     enum v4l2_buf_type type;
     fd_set fds;
     struct timeval tv;
+    bool iscapture;
     void handleData(unsigned char *bufData);
+
+    void startCapture();
+    void stopCapture();
 };
 
 #endif // CAMERA_H

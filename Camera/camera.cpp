@@ -19,6 +19,7 @@ Camera::Camera(QObject *parent)
 {
     this->parent = (VideoShow *) parent;
     running = false;
+    iscapture = false;
     /* 打开设备 */
     camerafd = -1;
     camerafd = open(cameraPath, O_RDWR | O_NONBLOCK, 0);
@@ -39,10 +40,7 @@ Camera::Camera(QObject *parent)
 
 Camera::~Camera()
 {
-    type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (0 > ioctl(camerafd, VIDIOC_STREAMOFF, &type)) {
-        return;
-    }
+    if(iscapture) stopCapture();
     for(int i = 0; i < FRAMEBUFFER_COUNT; i++){
         munmap(buffers[i].start,buffers[i].length);
     }
@@ -77,16 +75,6 @@ void Camera::run()
     /* 获取实际的帧宽高度 */
     qDebug("当前视频帧大小<%d * %d>, 颜色空间:%d", fmt.fmt.pix.width, fmt.fmt.pix.height,fmt.fmt.pix.colorspace);
 
-    /* 设置帧缓冲数量 */
-    reqbuf.count = FRAMEBUFFER_COUNT;       //帧缓冲的数量
-    reqbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    reqbuf.memory = V4L2_MEMORY_MMAP;
-    if (0 > ioctl(camerafd, VIDIOC_REQBUFS, &reqbuf)) {
-        qDebug("request buffer failed");
-        return;
-    }
-    qDebug("request buffer success");
-
     if(firstSetting){
         firstSetting = false;
         int exposureMin = 0, exposureMax = 100, exposure_default_value = 50;
@@ -98,6 +86,16 @@ void Camera::run()
         qDebug("gainMin:%d, gainMax:%d, gain_default_value:%d", gainMin, gainMax, gain_default_value);
         emit sendGainParam(gainMin, gainMax, gain_default_value);
     }
+
+    /* 设置帧缓冲数量 */
+    reqbuf.count = FRAMEBUFFER_COUNT;       //帧缓冲的数量
+    reqbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    reqbuf.memory = V4L2_MEMORY_MMAP;
+    if (0 > ioctl(camerafd, VIDIOC_REQBUFS, &reqbuf)) {
+        qDebug("request buffer failed");
+        return;
+    }
+    qDebug("request buffer success");
 
     /* 建立内存映射 */
     for(int i = 0; i < FRAMEBUFFER_COUNT; i++){
@@ -119,33 +117,23 @@ void Camera::run()
         }
     }
     qDebug("memory map success");
-
-    /* 入队 */
-    for(unsigned int i = 0; i < FRAMEBUFFER_COUNT; i++){
-        CLEAR(buf);
-        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        buf.memory = V4L2_MEMORY_MMAP;
-        buf.index = i;
-        if (0 > ioctl(camerafd, VIDIOC_QBUF, &buf)) {
-            qDebug("入队失败");
-            return;
-        }
-    }
-
-    /* 开启视频流 */
-    type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (0 > ioctl(camerafd, VIDIOC_STREAMON, &type)) {
-        qDebug("open stream failed");
-        return;
-    }
-    qDebug("open stream success");
-
     /* 获取帧数据 */
     while(true){
         if(end) break;
         if (!running) {
+            if(iscapture){
+                /* 关闭视频流 */
+                iscapture = false;
+                stopCapture();
+            }
             msleep(100); // 线程处于等待状态，减少CPU占用
             continue;
+        }else{
+            if(!iscapture){
+                /* 开启视频流 */
+                iscapture = true;
+                startCapture();
+            }
         }
         do{
             /* 初始化select()来进行I/O端口复用 */
@@ -163,19 +151,16 @@ void Camera::run()
             qDebug("select I/O failed");
             return;
         }
-
+        qDebug("select I/O success");
         //帧数据处理
         unsigned char onebuf[cameraWidth*cameraHeight*3];
         handleData(onebuf);
-
-        try{
-            QImage img_stream = QImage(onebuf,cameraWidth,cameraHeight,QImage::Format_RGB888);
-            img_stream = img_stream.scaled(widgetSize, Qt::KeepAspectRatio);
-            if(parent->isVisible()){
-                parent->img = img_stream;
-                parent->update();
-            }
-        }catch(...){}
+        QImage img_stream = QImage(onebuf,cameraWidth,cameraHeight,QImage::Format_RGB888);
+        img_stream = img_stream.scaled(widgetSize, Qt::KeepAspectRatio);
+        if(parent->isVisible()){
+            parent->img = img_stream;
+            parent->update();
+        }
     }
 }
 
@@ -224,9 +209,10 @@ void Camera::handleData(unsigned char *bufData)
     buf.memory = V4L2_MEMORY_MMAP;
     /* 出队 */
     if(0 > ioctl(camerafd,VIDIOC_DQBUF,&buf)){
-        qDebug("出队失败\n");
+        qDebug("出队失败");
         return;
     }
+    qDebug("出队成功");
 
     //数据处理
     unsigned char temp[buf.bytesused];
@@ -235,9 +221,42 @@ void Camera::handleData(unsigned char *bufData)
 
     /* 再次入队*/
     if (0 > ioctl(camerafd, VIDIOC_QBUF, &buf)) {
-        qDebug("入队失败\n");
+        qDebug("入队失败");
         return;
     }
+    qDebug("入队成功");
+}
+
+void Camera::startCapture()
+{
+    /* 入队 */
+    for(unsigned int i = 0; i < FRAMEBUFFER_COUNT; i++){
+        CLEAR(buf);
+        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        buf.memory = V4L2_MEMORY_MMAP;
+        buf.index = i;
+        if (0 > ioctl(camerafd, VIDIOC_QBUF, &buf)) {
+            qDebug("入队失败");
+            return;
+        }
+    }
+    type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    if (0 > ioctl(camerafd, VIDIOC_STREAMON, &type)) {
+        qDebug("open stream failed");
+        return;
+    }
+    qDebug("open stream success");
+}
+
+void Camera::stopCapture()
+{
+    type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    if (0 > ioctl(camerafd, VIDIOC_STREAMOFF, &type)) {
+        qDebug("close stream failed");
+        return;
+    }
+    qDebug("close stream success");
+    msleep(1000);
 }
 
 void Camera::yuv_to_rgb(unsigned char *yuv, unsigned char *rgb)
