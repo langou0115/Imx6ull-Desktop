@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Img/bg.png</file>
+        <file>Img/buzz.png</file>
+        <file>Img/clouds.png</file>
+        <file>Img/cpu.png</file>
+        <file>Img/dir.png</file>
+        <file>Img/error.png</file>
+        <file>Img/file.png</file>
+        <file>Img/fileapp.png</file>
+        <file>Img/leftArrow.png</file>
+        <file>Img/linux.png</file>
+        <file>Img/os.png</file>
+        <file>Img/pause.png</file>
+        <file>Img/play.png</file>
+        <file>Img/player.png</file>
+        <file>Img/rain.png</file>
+        <file>Img/resolution.png</file>
+        <file>Img/rom.png</file>
+        <file>Img/snow.png</file>
+        <file>Img/sun.png</file>
+        <file>Video/oceans.mp4</file>
+    </qresource>
+</RCC>

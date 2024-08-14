@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>903</width>
+    <height>445</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="Status">
+      <item>
+       <layout class="QHBoxLayout" name="TimeStatus">
+        <item>
+         <widget class="QLabel" name="Time">
+          <property name="text">
+           <string>时间: </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="TimeEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="DateStatus">
+        <item>
+         <widget class="QLabel" name="Date">
+          <property name="text">
+           <string>日期: </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="DateEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="CPUTempStatus">
+        <item>
+         <widget class="QLabel" name="CPUTemp">
+          <property name="text">
+           <string>CPU温度: </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="CPUTempEdit"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="BottomLayout" stretch="2,3,2">
+      <item>
+       <layout class="QVBoxLayout" name="LeftLayout" stretch="1,1">
+        <item>
+         <widget class="QTextEdit" name="Weather">
+          <property name="styleSheet">
+           <string notr="true">QTextEdit { border: none; /* 移除边框 */}</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Picture">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="MidLayout" stretch="11,1,5,2,13">
+        <item>
+         <layout class="QHBoxLayout" name="App" stretch="1,1,1">
+          <item>
+           <layout class="QVBoxLayout" name="PlayerApp" stretch="20,1">
+            <item>
+             <widget class="QPushButton" name="Player">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="PlayerName">
+              <property name="text">
+               <string>播放器   </string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="FileApp" stretch="20,1">
+            <item>
+             <widget class="QPushButton" name="File">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="FileName">
+              <property name="text">
+               <string>文件    </string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="SystemApp" stretch="20,1">
+            <item>
+             <widget class="QPushButton" name="System">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="SystemName">
+              <property name="text">
+               <string>系统    </string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="Hr1">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>322</width>
+            <height>13</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="CameraSetting" stretch="5,1,5">
+          <property name="rightMargin">
+           <number>11</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="EposureLayout">
+            <item>
+             <widget class="QLabel" name="Exposure">
+              <property name="text">
+               <string>曝光</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="ExposureSlider">
+              <property name="styleSheet">
+               <string notr="true">QSlider::groove:horizontal {
+    border: 1px solid #999999;
+    height: 15px; /* 滑动槽的高度 */
+    background: #b0c4de; /* 滑动槽的背景颜色 */
+    border-radius: 4px; /* 滑动槽的圆角 */
+}
+
+QSlider::handle:horizontal {
+    background: #40E0D0; /* 滑块的颜色 */
+    border: 1px solid #5c5c5c;
+    width: 18px; /* 滑块的宽度 */
+    height: 18px; /* 滑块的高度 */
+    margin: -5px 0; /* 滑块相对于槽的位置 */
+    border-radius: 10px; /* 滑块的圆角 */
+}
+
+QSlider::handle:horizontal:hover {
+    background: #20B2AA; /* 滑块悬停时的颜色 */
+}
+
+QSlider::sub-page:horizontal {
+    background: #7B68EE; /* 已滑过的部分颜色 */
+    border-radius: 4px;
+}
+
+QSlider::add-page:horizontal {
+    background: #FFF0F5; /* 未滑过的部分颜色 */
+    border-radius: 4px;
+}
+</string>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="GainLayout">
+            <item>
+             <widget class="QLabel" name="Gain">
+              <property name="text">
+               <string>增益</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="GainSlider">
+              <property name="styleSheet">
+               <string notr="true">QSlider::groove:horizontal {
+    border: 1px solid #999999;
+    height: 15px; /* 滑动槽的高度 */
+    background: #b0c4de; /* 滑动槽的背景颜色 */
+    border-radius: 4px; /* 滑动槽的圆角 */
+}
+
+QSlider::handle:horizontal {
+    background: #40E0D0; /* 滑块的颜色 */
+    border: 1px solid #5c5c5c;
+    width: 18px; /* 滑块的宽度 */
+    height: 18px; /* 滑块的高度 */
+    margin: -5px 0; /* 滑块相对于槽的位置 */
+    border-radius: 10px; /* 滑块的圆角 */
+}
+
+QSlider::handle:horizontal:hover {
+    background: #20B2AA; /* 滑块悬停时的颜色 */
+}
+
+QSlider::sub-page:horizontal {
+    background: #7B68EE; /* 已滑过的部分颜色 */
+    border-radius: 4px;
+}
+
+QSlider::add-page:horizontal {
+    background: #FFF0F5; /* 未滑过的部分颜色 */
+    border-radius: 4px;
+}
+</string>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="Hr2">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>322</width>
+            <height>13</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="Switch"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="RightLayout" stretch="1">
+        <item>
+         <widget class="QPushButton" name="Buzz">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
